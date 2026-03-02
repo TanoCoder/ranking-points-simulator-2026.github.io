@@ -10,8 +10,9 @@
 
 <script>
   
-   let PlayersCount = prompt("Enter NB Player Entries ?");
-   let TournamentTag = prompt("Enter Tournament Tag ex: (main, double, 1.5, etc... )?");
+   let PlayersCount = prompt("Enter number of Players Entries ?");   
+   let TournamentTag = prompt("Enter Tournament Tag if tagged, ex: (main, double, 1.5, 1.0 by default)?");
+   let TournamentTag_lower_case = TournamentTag.toLowerCase();
    let Position = prompt("Enter Your Final Position ?");
    
    //alert(PlayersCount);
@@ -127,10 +128,10 @@
    //alert('CoefficientPlayersCount : ' + CoefficientPlayersCount);
    
    let coefficient_tournament_tag = (
-            TournamentTag.includes("main") ? 1.20 :
-            TournamentTag.includes("double") ? 2.00 :
-            TournamentTag.includes("1.5") ? 1.50 :
-            1.0
+            TournamentTag_lower_case.includes("main") ? 1.20 :
+            TournamentTag_lower_case.includes("double") ? 2.00 :
+            TournamentTag_lower_case.includes("1.5") ? 1.50 : 
+            1.0            
    );
           
    //alert("coefficient_tournament_tag : " + coefficient_tournament_tag);
@@ -141,6 +142,7 @@
           / (Math.exp(6.0) - 1.0)
         ) + 10;
    
+   formula = formula.toFixed(2);
    alert("Result of Formula = " + formula);
 
 </script>
