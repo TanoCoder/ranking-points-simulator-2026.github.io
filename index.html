@@ -148,10 +148,22 @@
    //alert("coefficient_tournament_tag : " + coefficient_tournament_tag);
    
    
-   let formula = ((CoefficientPlayersCount * coefficient_tournament_tag) - 10) * (
-          (Math.exp(6.0 * ((Math.max(PlayersCount, 2.0) - Position) / (Math.max(PlayersCount, 2.0) - 1.0))) - 1.0)
-          / (Math.exp(6.0) - 1.0)
-        ) + 10;
+   let step_1 = ((CoefficientPlayersCount * coefficient_tournament_tag) - 10);
+   //alert("step_1: " + step_1);
+   
+   let max_PlayersCount_2 = Math.max(PlayersCount, 2.0);
+   //alert("max_PlayersCount_2: " + max_PlayersCount_2);
+   
+   let exp_val_1 = Math.exp(6.0 * ((max_PlayersCount_2 - Position) / (max_PlayersCount_2 - 1.0)));
+   //alert("exp_val_1: " + exp_val_1);
+   
+   let exp_val_2 = Math.exp(6.0);
+   //alert("exp_val_2: " + exp_val_2);
+      
+   let step_2 = (exp_val_1 - 1.0) / (exp_val_2 - 1.0)
+   //alert("step_2: " + step_2);
+   
+   let formula = step_1 * step_2 + 10;
    
    formula = formula.toFixed(2);
    alert("Result of Formula = " + formula);
