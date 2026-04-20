@@ -102,12 +102,12 @@
       
       let str_gap_points = "";
       while (str_gap_points == "") {
-         str_gap_points = prompt("About Showing Results\nEnter Gap Points not relevant and to skip ?\n[0 to 100]\n0 to show all.");   
+         str_gap_points = prompt("About Showing Results\nEnter Gap Points not relevant and to skip ?\n[0 to 10]\n0 to show all.");   
          str_gap_points = str_gap_points.trim();  
          
          gap_points = str_gap_points;
          
-         if ((gap_points < 0) || (gap_points > 100)){         
+         if ((gap_points < 0) || (gap_points > 10)){         
             alert("Wrong value! Enter between 1 and 100");
             str_gap_points = "";
          }
