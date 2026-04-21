@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking Points Simulator 2026</title>
+</head>
+<!-- blue kind -->
+<body style="background-color:rgb(53, 138, 242);">
+
+<div>
+   <!-- yellow kind -->
+   <h1 style="font-size:7vh; color:rgb(245, 241, 37); max-width: fit-content; margin-left: auto; margin-right: auto; text-align: center;">Ranking Points Simulator 2026 (Poker Namur)</h1>
+</div>
+
+<div>    
+   <p style="font-size:6vh; color:white; text-align: center;"><a id="restart" href="javascript:void(0)">Start Again</a></p>
+   <p style="font-size:4vh; color:white; text-align: center;">(Allow "POP UP" in your Web Browser Parameters to use this simulator)</p>
+</div>
+
+<div align="center" style="font-size:4vh; color:yellow;">
+   <p id="nb_entries"></p>
+   <p id="tournament_tag_coefficient"></p>
+</div>
+
+<div align="center" style="font-size:2.5vh; color:black;">
+      <p id="gap"></p>
+</div>      
+
+
+<div id="table-container" align="center" style="font-size:4vh; color:yellow;"></div>
+
+<script>
+
+function sanitizeInput(p_input) {
+    // Remove leading and trailing whitespace
+    let sanitized_Input = p_input.trim();    
+
+    // Remove any characters that are not alphanumeric (letters, numbers, point, hyphen)
+    sanitized_Input = sanitized_Input.replace(/[^a-zA-Z0-9.-]/g, '');      
+        
+    return sanitized_Input;            
+}
+
+   function createTable(){   
+      //Create new table div
+      const table = document.createElement("table");
+      table.id = "table-result";
+      table.border = "1"; // >0 for visibility only
+   
+      //Add headers
+      const headers = [" Position ", " Points "];
+      const headerRow = document.createElement("tr");
+
+      headers.forEach(text => {
+         const th = document.createElement("th");
+         th.style = "padding: 10px;"
+         th.textContent = text;
+         headerRow.appendChild(th);
+      });
+      
+      table.appendChild(headerRow);   
+      
+      return table;   
+   }
+   
+   function createRow(p_table, p_position, p_formula_result){
+      // Step Add data rows
+      const row = document.createElement("tr");
+      const cell1 = document.createElement("td");
+      cell1.style = "text-align : center; color:black; padding: 10px;"                 
+      cell1.textContent = p_position;
+      row.appendChild(cell1);
+
+      const cell2 = document.createElement("td");
+      cell2.style = "text-align : right; color:black; padding: 10px;"
+      cell2.textContent = p_formula_result;
+      row.appendChild(cell2);       
+
+      p_table.appendChild(row);               
+   }
+   
+
+   function getFormulaResult(p_PlayersCount, p_CoefficientPlayersCount, p_coefficient_tournament_tag, p_position ){
+      step_1 = ((p_CoefficientPlayersCount * p_coefficient_tournament_tag) - 10);            
+      max_PlayersCount_2 = Math.max(p_PlayersCount, 2.0);            
+      exp_val_1 = Math.exp(6.0 * ((max_PlayersCount_2 - p_position) / (max_PlayersCount_2 - 1.0)));            
+      exp_val_2 = Math.exp(6.0);               
+      step_2 = (exp_val_1 - 1.0) / (exp_val_2 - 1.0)            
+      formula = step_1 * step_2 + 10;            
+      formula_result = formula.toFixed(2);
+      return formula_result;      
+   }   
+   
+
+   function restart_simulator(){
+   
+      let regex_digit_only = /^[-]?\d+$/;
+      let regex_double = /^[-]?[0-9]*[.]?[0-9]+$/;
+      
+      // ------------   
+      // PlayersCount
+      // ------------   
+      
+      let str_PlayersCount = "";
+      let PlayersCount = 0;
+      
+      while (str_PlayersCount == "") {
+         PlayersCount = 0;
+         str_PlayersCount = prompt("Enter number of Players Entries ?\n(Max: 30 000)");      
+         
+         if (str_PlayersCount === null) { 
+            str_PlayersCount = "";
+            return;
+         } else {         
+            str_PlayersCount = sanitizeInput(str_PlayersCount);
+                       
+            if (str_PlayersCount != ""){
+               if (str_PlayersCount.length > 5){
+                  alert("Your input is too long!\nMaximum : 5 characters");
+                  str_PlayersCount = "";
+               } else if (regex_digit_only.test(str_PlayersCount) === true) {
+                  PlayersCount = Number(str_PlayersCount);      
+                                    
+                  if (PlayersCount > 30000) {         
+                    alert("Ho! Calm down! MAXIMUM Value is 30 000");
+                    str_PlayersCount = "";
+                    PlayersCount = 0;
+                  }                           
+               } else {
+                  // regex issue
+                  alert("Wrong input type: " + str_PlayersCount);
+                  str_PlayersCount = "";
+                  PlayersCount = 0;                  
+               }
+           }
+        }
+      } // end while
+
+
+      // -------------------------
+      // TournamentTag coefficient
+      // -------------------------
+      
+      let str_TournamentTag = "";
+      let TournamentTag = 0.0;
+      let coefficient_tournament_tag = 1.0;
+      let list_valid_tag = [1, 1.2, 1.5, 2];
+      
+      
+      while (str_TournamentTag == "") {      
+         TournamentTag = 0.0;
+         str_TournamentTag = prompt("Enter Tournament Tag Coefficient:\n[1]\n[1.2]\n[1.5]\n[2] for double ?");
+      
+         if (str_TournamentTag === null) { 
+            str_TournamentTag = "";
+            return;
+         } else {         
+            str_TournamentTag = sanitizeInput(str_TournamentTag);
+                          
+            if (str_TournamentTag != ""){               
+               if (str_TournamentTag.length > 3){
+                  alert("Your input is too long!\nMaximum : 3 characters");
+                  str_TournamentTag = "";
+               } else if (regex_double.test(str_TournamentTag) === true) {                  
+                  TournamentTag = Number(str_TournamentTag);   
+                  coefficient_tournament_tag = TournamentTag;                    
+                     
+                  if (TournamentTag < 1 || TournamentTag > 2) {         
+                     alert("min value is 1 and MAXIMUM Value is 2");
+                     str_TournamentTag = "";
+                     TournamentTag = 0.0;
+                  } else if (list_valid_tag.includes(TournamentTag) === false) {                  
+                     // TournamentTag value is not in valid list");  
+                     alert("Wrong value! (Valid value is : 1, 1.2, 1.5 or 2)");
+                     str_TournamentTag = "";
+                     TournamentTag = 0.0;                   
+                  }                        
+               } else {
+                  // regex issue
+                  alert("Wrong input type: " + str_TournamentTag);
+                  str_TournamentTag = "";
+                  TournamentTag = 0.0;                  
+               }
+           }
+        }
+      } // end while str_TournamentTag prompt
+
+      
+      // ---------------      
+      // gap points skip
+      // ---------------      
+      
+      let str_gap_points = "";
+      let gap_points = -1;
+      
+      while (str_gap_points == "") {
+         gap_points = 0;
+         str_gap_points = prompt("About Showing Results\nEnter Gap Points not relevant to skip ?\n[0 to 10]\nEx: 0 will show all.");   
+
+         if (str_gap_points === null) { 
+            str_gap_points = "";
+            return;
+         } else {         
+            str_gap_points = sanitizeInput(str_gap_points);
+                       
+            if (str_gap_points != ""){
+               if (str_gap_points.length > 2){
+                  alert("Your input is too long!\nMaximum : 2 characters");
+                  str_gap_points = "";
+               } else if (regex_digit_only.test(str_gap_points) === true) {
+                  gap_points = Number(str_gap_points);      
+                                    
+                  if (gap_points < 0 || gap_points > 10) {         
+                    alert("Wrong value! min value is 0 & MAXIMUM Value is 10");
+                    str_gap_points = "";
+                    gap_points = -1;
+                  }                           
+               } else {
+                  // regex issue
+                  alert("Wrong input type: " + str_gap_points);
+                  str_gap_points = "";
+                  gap_points = -1;
+               }
+           }
+        }
+         
+      } // end while Gap pts                  
+      
+
+      // -----------------------
+      // CoefficientPlayersCount
+      // -----------------------
+
+      let CoefficientPlayersCount = (PlayersCount <= 47 ? 122.5 :
+
+               PlayersCount <= 55 ? 130.0 :
+
+               PlayersCount <= 63 ? 137.5 :
+
+               PlayersCount <= 71 ? 145.0 :
+
+               PlayersCount <= 87 ? 152.5 :
+
+               PlayersCount <= 103 ? 160.0 :
+
+               PlayersCount <= 111 ? 167.5 :
+
+               PlayersCount <= 135 ? 175.0 :
+
+               PlayersCount <= 151 ? 182.5 :
+
+               PlayersCount <= 175 ? 190.0 :
+
+               PlayersCount <= 199 ? 197.5 :
+
+               PlayersCount <= 255 ? 205.0 :
+
+               PlayersCount <= 311 ? 212.5 :
+
+               PlayersCount <= 359 ? 220.0 :
+
+               PlayersCount <= 415 ? 227.5 :
+
+               PlayersCount <= 471 ? 235.0 :
+
+               PlayersCount <= 519 ? 242.5 :
+
+               PlayersCount <= 575 ? 250.0 :
+
+               PlayersCount <= 631 ? 257.5 :
+
+               PlayersCount <= 679 ? 265.0 :
+
+               PlayersCount <= 735 ? 272.5 :
+
+               PlayersCount <= 791 ? 280.0 :
+
+               PlayersCount <= 839 ? 287.5 :
+
+               PlayersCount <= 895 ? 295.0 :
+
+               PlayersCount <= 951 ? 302.5 :
+
+               PlayersCount <= 999 ? 310.0 :
+
+               PlayersCount <= 1055 ? 317.5 :
+
+               PlayersCount <= 1111 ? 325.0 :
+
+               PlayersCount <= 1159 ? 332.5 :
+
+               PlayersCount <= 1215 ? 340.0 :
+
+               PlayersCount <= 1271 ? 347.5 :
+
+               PlayersCount <= 1319 ? 355.0 :
+
+               PlayersCount <= 1375 ? 362.5 :
+
+               PlayersCount <= 1431 ? 370.0 :
+
+               PlayersCount <= 1511 ? 377.5 :
+
+               PlayersCount <= 1600 ? 385.0 :
+
+               PlayersCount <= 1700 ? 392.5 :
+
+               PlayersCount <= 1800 ? 400.0 :
+
+               PlayersCount <= 1900 ? 407.5 :
+
+               PlayersCount <= 2000 ? 415.0 :
+
+               PlayersCount <= 2150 ? 422.5 :
+
+               PlayersCount <= 2300 ? 430.0 :
+
+               PlayersCount <= 2450 ? 437.5 :
+
+               PlayersCount <= 2600 ? 445.0 :
+
+               PlayersCount <= 2750 ? 452.5 :
+
+               PlayersCount <= 2900 ? 460.0 :
+
+               PlayersCount <= 3100 ? 467.5 :
+
+               PlayersCount <= 3300 ? 475.0 :
+
+               PlayersCount <= 3500 ? 482.5 :
+
+               PlayersCount <= 3700 ? 490.0 :
+
+               PlayersCount <= 3900 ? 497.5 :
+
+               PlayersCount <= 4100 ? 505.0 :
+               505.0
+               );
+
+      
+      let step_1 = 0.0
+      let max_PlayersCount_2 = 0.0
+      let exp_val_1 = 0.0
+      let exp_val_2 = 0.0
+      let step_2 = 0.0
+      let formula = 0.0           
+         
+      // show nb entries tournament tag coefficient & Gap infos
+      document.getElementById('nb_entries').innerHTML = 'NB Entries: ' + PlayersCount;
+      document.getElementById('tournament_tag_coefficient').innerHTML = 'Tournament Tag Coefficient: ' + coefficient_tournament_tag;
+      document.getElementById('gap').innerHTML = '(Gap Pts: ' + gap_points + ')';
+            
+      //delete table
+      let tbl = document.getElementById("table-result");
+      if(tbl) tbl.parentNode.removeChild(tbl);            
+      
+      table = createTable();   	
+      
+      let last_shown_result_points = 0.0
+      
+      for (let position = 1; position <= Number(PlayersCount); position++){        
+
+         formula_result = getFormulaResult(PlayersCount, CoefficientPlayersCount, coefficient_tournament_tag, position);      
+         
+         if ((position == 1) || (position == Number(PlayersCount))){
+            // create row to show later
+            createRow(table, position, formula_result);
+            last_shown_result_points = formula_result;
+         } else {
+            //alert("position : " + position + " current formula_result = " + (formula_result));
+            //alert("last_shown_result_points : " + (last_shown_result_points));            
+            
+            if ((last_shown_result_points - formula_result) >= gap_points){
+               // create row to show later when inserted into DOM
+               createRow(table, position, formula_result);
+               last_shown_result_points = formula_result;
+            }
+         }                 
+	
+      } // end for
+
+      // Insert the table into the DOM
+      document.getElementById("table-container").appendChild(table);
+      
+      window.location.href = "#restart";
+
+   }  // End function restart_simulator()
+   
+   // Attach event listener
+   window.addEventListener('load', restart_simulator);
+   document.getElementById('restart').addEventListener('click', restart_simulator);
+   
+</script>
+  
+</body>
+</html>
+
+
+
+
+
+
